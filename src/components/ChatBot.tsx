@@ -361,7 +361,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({
   const isConversationEmpty = messages.length <= 1;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-60px)] max-w-4xl mx-auto w-full relative">
+    <div className="flex flex-col h-full min-h-0 max-w-4xl mx-auto w-full relative">
       {/* Active Note Context Notification Banner */}
       {activeNoteContext && (
         <div className="px-4 py-2.5 mx-4 mt-2 bg-indigo-50/90 dark:bg-indigo-950/50 border border-indigo-200/80 dark:border-indigo-800/60 rounded-xl flex items-center justify-between text-xs text-indigo-900 dark:text-indigo-200 shadow-xs shrink-0">
@@ -645,7 +645,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({
       </div>
 
       {/* ChatGPT-Inspired Bottom Composer Container */}
-      <div className="p-3 md:p-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent dark:from-slate-950 dark:via-slate-950 dark:to-transparent shrink-0">
+      <div className="safe-area-bottom p-3 md:p-4 bg-gradient-to-t from-slate-50 via-slate-50/95 to-transparent dark:from-[#050816] dark:via-[#050816]/95 dark:to-transparent shrink-0">
         <div className="relative max-w-3xl mx-auto">
           {/* Attached Document Preview Badge above composer */}
           {attachedPdf && (
@@ -804,7 +804,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({
           />
 
           {/* Main Futuristic Rounded Capsule Composer Box */}
-          <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-full border border-slate-300/80 dark:border-blue-500/25 bg-white/90 dark:bg-[#070b22]/90 backdrop-blur-xl shadow-xl shadow-blue-950/20 focus-within:border-blue-500/60 focus-within:ring-2 focus-within:ring-blue-500/30 transition-all">
+          <div className="vidya-glass flex items-center gap-2 p-1.5 sm:p-2 rounded-[1.35rem] border-blue-500/25 bg-white/85 dark:bg-[#070b22]/85 backdrop-blur-2xl shadow-xl shadow-blue-950/20 focus-within:border-blue-500/60 focus-within:ring-2 focus-within:ring-blue-500/30 transition-all">
             {/* ➕ Plus Tool Button */}
             <button
               type="button"
@@ -825,7 +825,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
+                if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing && e.keyCode !== 229) {
                   e.preventDefault();
                   handleSend();
                 }
