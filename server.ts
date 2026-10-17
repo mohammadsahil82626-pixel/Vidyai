@@ -16,6 +16,17 @@ const PORT = Number(process.env.PORT) || 3000;
 app.use(express.json({ limit: '35mb' }));
 app.use(express.urlencoded({ limit: '35mb', extended: true }));
 
+// Enable CORS for all API routes (essential for iframe preview and proxying)
+app.use((_req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  if (_req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 // Helper to check API Key
 function getGeminiClient(): GoogleGenAI {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -103,10 +114,10 @@ app.post('/api/verify-pdf', (req: Request, res: Response) => {
   }
 });
 
-// Core AI Chatbot Endpoint (with Streaming SSE support)
+// Core AI Chatbot Endpoint (with Streaming SSE and fallback support)
 app.post('/api/chat', async (req: Request, res: Response) => {
   try {
-    const { messages, language = 'English', subjectContext, stream = true } = req.body;
+    const { messages, language = 'English', subjectContext, pdfBase64, pdfFileName, stream = true } = req.body;
 
     if (!Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: 'A list of messages is required.' });
@@ -128,22 +139,52 @@ Tone & Pedagogy:
 - Use Markdown tables for comparisons.
 - Always be encouraging, student-friendly, and accurate. Do not invent facts or fake syllabus references.
 ${subjectContext ? `Current subject context: ${subjectContext}.` : ''}
+${pdfFileName ? `A chapter PDF "${pdfFileName}" is attached for reference. Prioritize answering based on this document when applicable.` : ''}
 `;
 
-    // Map conversation history
+    // Map conversation history & sanitize contents
     const contents: any[] = [];
     for (const msg of messages) {
+      if (!msg || typeof msg.content !== 'string' || !msg.content.trim()) {
+        continue;
+      }
       contents.push({
         role: msg.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: msg.content }],
+        parts: [{ text: msg.content.trim() }],
       });
     }
 
+    if (contents.length === 0) {
+      return res.status(400).json({ error: 'No valid message content provided.' });
+    }
+
+    // Gemini requires first turn to be 'user'
+    if (contents[0].role !== 'user') {
+      contents.unshift({
+        role: 'user',
+        parts: [{ text: 'Hello!' }],
+      });
+    }
+
+    // Attach PDF data if present to the latest user message
+    if (pdfBase64 && contents.length > 0) {
+      const lastItem = contents[contents.length - 1];
+      if (lastItem.role === 'user') {
+        lastItem.parts.unshift({
+          inlineData: {
+            mimeType: 'application/pdf',
+            data: pdfBase64,
+          },
+        });
+      }
+    }
+
     if (stream) {
-      // Setup Server-Sent Events (SSE)
-      res.setHeader('Content-Type', 'text/event-stream');
-      res.setHeader('Cache-Control', 'no-cache');
+      // Setup Server-Sent Events (SSE) with anti-buffering headers
+      res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, no-transform');
       res.setHeader('Connection', 'keep-alive');
+      res.setHeader('X-Accel-Buffering', 'no');
       res.flushHeaders();
 
       const responseStream = await ai.models.generateContentStream({
@@ -174,16 +215,24 @@ ${subjectContext ? `Current subject context: ${subjectContext}.` : ''}
         },
       });
 
-      return res.json({ text: response.text });
+      return res.json({ text: response.text || '' });
     }
   } catch (err: any) {
     console.error('Chat endpoint error:', err);
+    const isQuota =
+      err.status === 429 ||
+      (err.message &&
+        (err.message.includes('429') ||
+          err.message.toLowerCase().includes('quota') ||
+          err.message.includes('RESOURCE_EXHAUSTED')));
+    const friendlyMsg = isQuota
+      ? 'VidyaAI free student service quota momentarily reached. Please wait a few seconds and retry.'
+      : err.message || 'An error occurred while generating response from Gemini.';
+
     if (!res.headersSent) {
-      return res.status(500).json({
-        error: err.message || 'An error occurred while generating response from Gemini.',
-      });
+      return res.status(isQuota ? 429 : 500).json({ error: friendlyMsg });
     } else {
-      res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`);
+      res.write(`data: ${JSON.stringify({ error: friendlyMsg })}\n\n`);
       res.end();
     }
   }
@@ -424,9 +473,16 @@ ${customInstructions ? `Additional Student Request: ${customInstructions}` : ''}
     });
   } catch (err: any) {
     console.error('Generate notes error:', err);
-    return res.status(500).json({
-      error: err.message || 'Failed to generate smart notes. Please verify your inputs and try again.',
-    });
+    const isQuota =
+      err.status === 429 ||
+      (err.message &&
+        (err.message.includes('429') ||
+          err.message.toLowerCase().includes('quota') ||
+          err.message.includes('RESOURCE_EXHAUSTED')));
+    const friendlyMsg = isQuota
+      ? 'VidyaAI free student service quota momentarily reached. Please wait a few seconds and click Generate Notes again.'
+      : err.message || 'Failed to generate smart notes. Please verify your inputs and try again.';
+    return res.status(isQuota ? 429 : 500).json({ error: friendlyMsg });
   }
 });
 
@@ -574,9 +630,16 @@ ${notesText.slice(0, 5000)}`,
     return res.status(400).json({ error: `Unknown action: ${action}` });
   } catch (err: any) {
     console.error('Notes action error:', err);
-    return res.status(500).json({
-      error: err.message || 'Failed to perform requested note action.',
-    });
+    const isQuota =
+      err.status === 429 ||
+      (err.message &&
+        (err.message.includes('429') ||
+          err.message.toLowerCase().includes('quota') ||
+          err.message.includes('RESOURCE_EXHAUSTED')));
+    const friendlyMsg = isQuota
+      ? 'VidyaAI free student service quota momentarily reached. Please wait a few seconds and try again.'
+      : err.message || 'Failed to perform requested note action.';
+    return res.status(isQuota ? 429 : 500).json({ error: friendlyMsg });
   }
 });
 

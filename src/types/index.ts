@@ -53,6 +53,15 @@ export interface ChatMessage {
   content: string;
   timestamp: string;
   isError?: boolean;
+  attachedPdfName?: string;
+}
+
+export interface Conversation {
+  id: string;
+  title: string;
+  messages: ChatMessage[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface SavedNote {
