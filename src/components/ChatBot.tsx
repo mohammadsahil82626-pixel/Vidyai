@@ -361,7 +361,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({
   const isConversationEmpty = messages.length <= 1;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-60px)] max-w-4xl mx-auto w-full relative">
+    <div className="flex flex-col h-full min-h-0 max-w-5xl mx-auto w-full relative">
       {/* Active Note Context Notification Banner */}
       {activeNoteContext && (
         <div className="px-4 py-2.5 mx-4 mt-2 bg-indigo-50/90 dark:bg-indigo-950/50 border border-indigo-200/80 dark:border-indigo-800/60 rounded-xl flex items-center justify-between text-xs text-indigo-900 dark:text-indigo-200 shadow-xs shrink-0">
@@ -384,17 +384,20 @@ export const ChatBot: React.FC<ChatBotProps> = ({
       )}
 
       {/* Messages Scroll Area */}
-      <div className="flex-1 p-4 md:p-6 overflow-y-auto space-y-6">
+      <div className="flex-1 p-3 sm:p-4 md:p-6 overflow-y-auto space-y-6">
         {/* Welcoming Greeting & 4 Quick Action Cards matching futuristic identity */}
         {!messages.some((m) => m.role === 'user') && (
-          <div className="py-6 md:py-10 text-center max-w-xl mx-auto space-y-6 animate-in fade-in duration-500">
+          <div className="py-4 sm:py-6 md:py-10 text-center max-w-2xl mx-auto space-y-5 sm:space-y-6 animate-in fade-in duration-500">
             {/* 3D Glowing Celestial Planet with Orbital Rings & Graduation Cap */}
             <div className="flex justify-center">
-              <VidyaLogoOrb size="hero" />
+              <div className="relative">
+                <div className="absolute inset-5 rounded-full bg-blue-500/20 blur-3xl" />
+                <VidyaLogoOrb size="hero" />
+              </div>
             </div>
 
             <div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
+              <h1 className="text-[2rem] leading-tight sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
                 Your AI{' '}
                 <span className="bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 dark:from-sky-300 dark:via-blue-400 dark:to-indigo-300 bg-clip-text text-transparent">
                   study companion
@@ -414,7 +417,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({
                   setExplainTopic(input.trim());
                   setIsExplainModalOpen(true);
                 }}
-                className="p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-blue-500/20 bg-white/80 dark:bg-[#070b24]/75 backdrop-blur-md hover:border-blue-400 dark:hover:border-blue-500/50 hover:bg-blue-50/50 dark:hover:bg-blue-950/30 transition-all group flex items-center justify-between shadow-xs hover:shadow-md"
+                className="p-3.5 sm:p-4 rounded-[1.25rem] border border-slate-200/80 dark:border-blue-500/25 bg-white/75 dark:bg-[#07112f]/72 backdrop-blur-xl hover:border-blue-400 dark:hover:border-blue-500/60 hover:bg-blue-50/50 dark:hover:bg-blue-950/35 transition-all group flex items-center justify-between shadow-[0_8px_25px_rgba(15,23,42,0.06)] hover:shadow-lg hover:-translate-y-0.5"
               >
                 <div className="flex items-center gap-2.5 sm:gap-3">
                   <div className="w-10 h-10 rounded-full bg-blue-500/15 dark:bg-blue-500/20 border border-blue-500/30 text-sky-500 dark:text-sky-400 flex items-center justify-center shrink-0">
@@ -439,7 +442,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({
                   setInput('Please solve this problem step-by-step with formulas and final answer: ');
                   textareaRef.current?.focus();
                 }}
-                className="p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-purple-500/20 bg-white/80 dark:bg-[#070b24]/75 backdrop-blur-md hover:border-purple-400 dark:hover:border-purple-500/50 hover:bg-purple-50/50 dark:hover:bg-purple-950/30 transition-all group flex items-center justify-between shadow-xs hover:shadow-md"
+                className="p-3.5 sm:p-4 rounded-[1.25rem] border border-slate-200/80 dark:border-purple-500/25 bg-white/75 dark:bg-[#07112f]/72 backdrop-blur-xl hover:border-purple-400 dark:hover:border-purple-500/60 hover:bg-purple-50/50 dark:hover:bg-purple-950/35 transition-all group flex items-center justify-between shadow-[0_8px_25px_rgba(15,23,42,0.06)] hover:shadow-lg hover:-translate-y-0.5"
               >
                 <div className="flex items-center gap-2.5 sm:gap-3">
                   <div className="w-10 h-10 rounded-full bg-purple-500/15 dark:bg-purple-500/20 border border-purple-500/30 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
@@ -469,7 +472,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({
                     );
                   }
                 }}
-                className="p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-teal-500/20 bg-white/80 dark:bg-[#070b24]/75 backdrop-blur-md hover:border-teal-400 dark:hover:border-teal-500/50 hover:bg-teal-50/50 dark:hover:bg-teal-950/30 transition-all group flex items-center justify-between shadow-xs hover:shadow-md"
+                className="p-3.5 sm:p-4 rounded-[1.25rem] border border-slate-200/80 dark:border-teal-500/25 bg-white/75 dark:bg-[#07112f]/72 backdrop-blur-xl hover:border-teal-400 dark:hover:border-teal-500/60 hover:bg-teal-50/50 dark:hover:bg-teal-950/35 transition-all group flex items-center justify-between shadow-[0_8px_25px_rgba(15,23,42,0.06)] hover:shadow-lg hover:-translate-y-0.5"
               >
                 <div className="flex items-center gap-2.5 sm:gap-3">
                   <div className="w-10 h-10 rounded-full bg-teal-500/15 dark:bg-teal-500/20 border border-teal-500/30 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
@@ -493,7 +496,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({
                 onClick={() => {
                   fileInputRef.current?.click();
                 }}
-                className="p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-indigo-500/20 bg-white/80 dark:bg-[#070b24]/75 backdrop-blur-md hover:border-indigo-400 dark:hover:border-indigo-500/50 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 transition-all group flex items-center justify-between shadow-xs hover:shadow-md"
+                className="p-3.5 sm:p-4 rounded-[1.25rem] border border-slate-200/80 dark:border-indigo-500/25 bg-white/75 dark:bg-[#07112f]/72 backdrop-blur-xl hover:border-indigo-400 dark:hover:border-indigo-500/60 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/35 transition-all group flex items-center justify-between shadow-[0_8px_25px_rgba(15,23,42,0.06)] hover:shadow-lg hover:-translate-y-0.5"
               >
                 <div className="flex items-center gap-2.5 sm:gap-3">
                   <div className="w-10 h-10 rounded-full bg-indigo-500/15 dark:bg-indigo-500/20 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
@@ -645,7 +648,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({
       </div>
 
       {/* ChatGPT-Inspired Bottom Composer Container */}
-      <div className="p-3 md:p-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent dark:from-slate-950 dark:via-slate-950 dark:to-transparent shrink-0">
+      <div className="safe-area-bottom p-3 md:p-4 bg-gradient-to-t from-slate-50 via-slate-50/95 to-transparent dark:from-[#050816] dark:via-[#050816]/95 dark:to-transparent shrink-0">
         <div className="relative max-w-3xl mx-auto">
           {/* Attached Document Preview Badge above composer */}
           {attachedPdf && (
@@ -804,7 +807,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({
           />
 
           {/* Main Futuristic Rounded Capsule Composer Box */}
-          <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-full border border-slate-300/80 dark:border-blue-500/25 bg-white/90 dark:bg-[#070b22]/90 backdrop-blur-xl shadow-xl shadow-blue-950/20 focus-within:border-blue-500/60 focus-within:ring-2 focus-within:ring-blue-500/30 transition-all">
+          <div className="vidya-glass flex items-center gap-2 p-1.5 sm:p-2 rounded-[1.35rem] border-blue-500/25 bg-white/85 dark:bg-[#070b22]/85 backdrop-blur-2xl shadow-xl shadow-blue-950/20 focus-within:border-blue-500/60 focus-within:ring-2 focus-within:ring-blue-500/30 transition-all">
             {/* ➕ Plus Tool Button */}
             <button
               type="button"
@@ -825,7 +828,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
+                if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing && e.keyCode !== 229) {
                   e.preventDefault();
                   handleSend();
                 }

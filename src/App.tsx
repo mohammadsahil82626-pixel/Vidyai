@@ -355,7 +355,7 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-slate-50 dark:bg-[#050816] text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200 relative">
+    <div className="h-[100dvh] w-screen overflow-hidden bg-slate-50 dark:bg-[#050816] text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300 relative">
       {/* Animated Cosmic Background (Aurora waves, glowing nebula, and stardust) */}
       <CosmicBackground isDarkMode={isDarkMode} />
 
@@ -382,7 +382,7 @@ export default function App() {
       />
 
       {/* Top App Bar — Minimal, Futuristic, Translucent Glass */}
-      <header className="h-14 shrink-0 px-3 md:px-5 border-b border-slate-200/80 dark:border-blue-500/15 bg-white/75 dark:bg-[#050816]/70 backdrop-blur-xl flex items-center justify-between z-30 select-none">
+      <header className="h-16 shrink-0 px-3 md:px-6 border-b border-slate-200/70 dark:border-blue-500/15 bg-white/70 dark:bg-[#050816]/68 backdrop-blur-2xl flex items-center justify-between z-30 select-none shadow-[0_1px_0_rgba(255,255,255,0.08)]">
         {/* Top-Left: Hamburger Menu Button */}
         <div className="flex items-center gap-2.5">
           <button
@@ -486,7 +486,7 @@ export default function App() {
       </header>
 
       {/* Main Content Area — Clean, Immersive (No Bottom Navigation) */}
-      <main className="flex-1 overflow-hidden relative flex flex-col w-full h-[calc(100vh-3.5rem)]">
+      <main className="flex-1 overflow-hidden relative flex flex-col w-full h-[calc(100dvh-4rem)]">
         {/* Chat Tab: Takes full height with fixed bottom composer */}
         {activeTab === 'chat' && (
           <div className="flex-1 h-full w-full overflow-hidden flex flex-col">
