@@ -1,0 +1,6 @@
+{
+  "name": "VidyaAI - Student AI Chatbot & Smart Notes Generator",
+  "description": "Intelligent student study companion and AI smart notes generator supporting CBSE, ICSE, State Boards in English, Hindi, and Hinglish with PDF chapter processing, formulas, revision questions, and interactive quizzes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
