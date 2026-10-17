@@ -649,15 +649,14 @@ async function startServer() {
 
   if (isDev) {
     const { createServer: createViteServer } = await import('vite');
-const vite = await createViteServer({
-  // The Express middleware server does not forward Vite's WebSocket upgrade
-  // requests, so leaving HMR enabled creates a client socket that can never open.
-  server: {
-    middlewareMode: true,
-    hmr: false,
-  },
-  appType: 'spa',
-});
+    const vite = await createViteServer({
+      // Express middleware does not forward Vite WebSocket upgrades.
+      server: {
+        middlewareMode: true,
+        hmr: false,
+      },
+      appType: 'spa',
+    });
     app.use(vite.middlewares);
     console.log('Vite middleware mounted in development mode.');
   } else {
